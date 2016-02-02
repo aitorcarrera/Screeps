@@ -47,7 +47,7 @@ var proto = {
 	getParts: function() {
 		var _ = require('lodash');
 
-		var extensions = Game.getRoom('1-1').find(Game.MY_STRUCTURES, {
+		var extensions = Game.spawns.Spawn1.room.find(FIND_MY_STRUCTURES, {
 			filter: function(structure)
 			{
 				return (structure.structureType == Game.STRUCTURE_EXTENSION && structure.energy >= 200);
@@ -87,7 +87,7 @@ var proto = {
 		var creep = this.creep;
 
 		var distance = 4;
-		var restTarget = creep.pos.findNearest(Game.MY_SPAWNS);
+		var restTarget = creep.pos.findClosestByPath(FIND_MY_SPAWNS);
 
 		if(!civilian) {
 			var flags = Game.flags;
@@ -108,10 +108,10 @@ var proto = {
 //		if(flag !== undefined && civilian !== true && !creep.pos.inRangeTo(flag, distance) && !creep.pos.findPathTo(flag).length)
 //			restTarget = flag2;
 
-		if (creep.getActiveBodyparts(Game.HEAL)) {
+		if (creep.getActiveBodyparts(HEAL)) {
 //			distance = distance - 1;
 		}
-		else if (creep.getActiveBodyparts(Game.RANGED_ATTACK)) {
+		else if (creep.getActiveBodyparts(RANGED_ATTACK)) {
 //			distance = distance - 1;
 		}
 		if (creep.pos.findPathTo(restTarget).length > distance) {
@@ -127,7 +127,7 @@ var proto = {
 		var creep = this.creep;
 
 		if(!target)
-			target = creep.pos.findNearest(Game.HOSTILE_CREEPS);
+			target = creep.pos.findClosestByPath(FIND_HOSTILE_CREEPS);
 
 		if(target) {
 			if (target.pos.inRangeTo(creep.pos, 3) ) {
@@ -142,7 +142,7 @@ var proto = {
 	{
 		var creep = this.creep;
 
-		var target = creep.pos.findNearest(Game.HOSTILE_CREEPS);
+		var target = creep.pos.findClosestByPath(FIND_HOSTILE_CREEPS);
 		if(target !== null && target.pos.inRangeTo(creep.pos, 3))
 			creep.moveTo(creep.pos.x + creep.pos.x - target.pos.x, creep.pos.y + creep.pos.y - target.pos.y );
 	},
@@ -172,10 +172,10 @@ var proto = {
 	{
 		var creep = this.creep;
 
-		var closeArchers = creep.pos.findNearest(Game.HOSTILE_CREEPS, {
+		var closeArchers = creep.pos.findClosestByPath(FIND_HOSTILE_CREEPS, {
 			filter: function(enemy)
 			{
-				return enemy.getActiveBodyparts(Game.RANGED_ATTACK) > 0
+				return enemy.getActiveBodyparts(RANGED_ATTACK) > 0
 					&& creep.pos.inRangeTo(enemy, 3);
 			}
 		});
@@ -183,11 +183,11 @@ var proto = {
 		if(closeArchers != null)
 			return closeArchers;
 
-		var closeMobileMelee = creep.pos.findNearest(Game.HOSTILE_CREEPS, {
+		var closeMobileMelee = creep.pos.findClosestByPath(FIND_HOSTILE_CREEPS, {
 			filter: function(enemy)
 			{
-				return enemy.getActiveBodyparts(Game.ATTACK) > 0
-					&& enemy.getActiveBodyparts(Game.MOVE) > 0
+				return enemy.getActiveBodyparts(ATTACK) > 0
+					&& enemy.getActiveBodyparts(MOVE) > 0
 					&& creep.pos.inRangeTo(enemy, 3);
 			}
 		});
@@ -195,11 +195,11 @@ var proto = {
 		if(closeMobileMelee != null)
 			return closeMobileMelee;
 
-		var closeHealer = creep.pos.findNearest(Game.HOSTILE_CREEPS, {
+		var closeHealer = creep.pos.findClosestByPath(FIND_HOSTILE_CREEPS, {
 			filter: function(enemy)
 			{
-				return enemy.getActiveBodyparts(Game.HEAL) > 0
-					&& enemy.getActiveBodyparts(Game.MOVE) > 0
+				return enemy.getActiveBodyparts(HEAL) > 0
+					&& enemy.getActiveBodyparts(MOVE) > 0
 					&& creep.pos.inRangeTo(enemy, 3);
 			}
 		});
@@ -207,7 +207,7 @@ var proto = {
 		if(closeHealer != null)
 			return closeHealer;
 
-		return creep.pos.findNearest(Game.HOSTILE_CREEPS);
+		return creep.pos.findClosestByPath(FIND_HOSTILE_CREEPS);
 	}
 };
 

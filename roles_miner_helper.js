@@ -7,14 +7,14 @@
 
 var helper = {
 	parts: [
-		[Game.MOVE, Game.CARRY, Game.MOVE, Game.CARRY],
-		[Game.MOVE, Game.CARRY, Game.MOVE, Game.CARRY, Game.MOVE, Game.CARRY]
+		[MOVE, CARRY, MOVE, CARRY],
+		[MOVE, CARRY, MOVE, CARRY, MOVE, CARRY]
 	],
 
 	assignMiner: function () {
 		var creep = this.creep;
 
-		var miner = creep.pos.findNearest(Game.MY_CREEPS, {
+		var miner = creep.pos.findClosestByPath(FIND_MY_CREEPS, {
 			filter: function (miner) {
 				if (miner.memory.role == 'miner' && miner.memory.helpers.length < miner.memory.helpersNeeded)
 					return true;
@@ -73,7 +73,7 @@ var helper = {
 		//Okay, everything below is for dropping energy off
 
 		if (!target) {
-			var spawn = creep.pos.findNearest(Game.MY_SPAWNS);
+			var spawn = creep.pos.findClosestByPath(FIND_MY_SPAWNS);
 
 			//If we found it, set it as our target
 			if (spawn)
@@ -98,7 +98,7 @@ var helper = {
 		if (rightDir > 8)
 			rightDir -= 8;
 
-		var courier = creep.pos.findNearest(Game.MY_CREEPS, {
+		var courier = creep.pos.findClosestByPath(FIND_MY_CREEPS, {
 			filter: function (possibleTarget) {
 				return (
 					possibleTarget.memory.role == creep.memory.role

@@ -20,19 +20,21 @@ module.exports =
 	{
 		this.initSpawnQue();
 
-		if(!Memory.spawnQue.length) 
-			return;
+		if(!Memory.spawnQue.length){
+		console.log('length');
+			return;}
 
-		var spawns = Game.getRoom('1-1').find(Game.MY_SPAWNS, {
+		var spawns = Game.spawns.Spawn1.room.find(FIND_MY_SPAWNS, {
 			filter: function(spawn)
 			{
 				return spawn.spawning === undefined || spawn.spawning === null;
 			}
 		});
 
-		if(!spawns.length) 
-			return;
-
+		if(!spawns.length)
+		{
+		console.log('spawns.length');
+			return;}
 		var role = Memory.spawnQue[0];
 
 		if(typeof role == "string")
@@ -46,7 +48,7 @@ module.exports =
 			return me.canSpawn(spawn, role.type);
 		});
 
-		if(! toSpawnAt.length) 
+		if(! toSpawnAt.length)
 			return;
 
 		toSpawnAt = toSpawnAt[0];
@@ -65,11 +67,13 @@ module.exports =
 
 		if(!manager.roleExists(role))
 		{
+			console.log('!roleExists');
 			return;
 		}
 
 		if(!this.canSpawn(spawnPoint, role))
 		{
+			console.log('!canSpawn');
 			return;
 		}
 
@@ -89,7 +93,7 @@ module.exports =
 		}
 
 		console.log('Spawning ' + role);
-		spawnPoint.createCreep(manager.getRoleBodyParts(role), name, memory);
+		console.log(spawnPoint.createCreep(manager.getRoleBodyParts(role), name, memory));
 	},
 
 	canSpawn: function(spawnPoint, role)
@@ -116,31 +120,31 @@ module.exports =
 			var part = parts[index];
 			switch(part)
 			{
-				case Game.MOVE:
+				case MOVE:
 					total += 50
 					break;
 
-				case Game.WORK:
+				case WORK:
 					total += 20
 					break;
 
-				case Game.CARRY:
+				case CARRY:
 					total += 50
 					break;
 
-				case Game.ATTACK:
+				case ATTACK:
 					total += 100
 					break;
 
-				case Game.RANGED_ATTACK:
+				case RANGED_ATTACK:
 					total += 150
 					break;
 
-				case Game.HEAL:
+				case HEAL:
 					total += 200
 					break;
 
-				case Game.TOUGH:
+				case TOUGH:
 					total += 5
 					break;
 			}

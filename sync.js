@@ -1,9 +1,9 @@
 "use strict";
-var http = require('http');
+var http = require('https');
 var path = require('path');
 var fs = require('fs');
 var URL = require('url');
- 
+
 // This all runs in the browser
 var clientSide = function() {
 	// Grab reference to the commit button
@@ -11,7 +11,7 @@ var clientSide = function() {
 		return el.getAttribute('ng:disabled') === '!Script.dirty';
 	});
 	var commitButton = buttons[0];
- 
+
 	// Override lodash's cloneDeep which is called from inside the internal reset method
 	var modules;
 	_.cloneDeep = function(cloneDeep) {
@@ -23,7 +23,7 @@ var clientSide = function() {
 			return cloneDeep.apply(this, arguments);
 		};
 	}(_.cloneDeep);
- 
+
 	// Wait for changes to local filesystem
 	function update(now) {
 		var req = new XMLHttpRequest;
@@ -37,11 +37,11 @@ var clientSide = function() {
 				setTimeout(update.bind(this, false), req.status === 200 ? 0 : 1000);
 			}
 		};
-		req.open('GET', 'http://localhost:9090/'+ (now ? 'get' : 'wait'), true);
+		req.open('GET', 'https://localhost:9090/'+ (now ? 'get' : 'wait'), true);
 		req.send();
 	};
 	update(true);
- 
+
 	// Look for console messages
 	var sconsole = document.body.getElementsByClassName('console-messages-list')[0];
 	var lastMessage;
@@ -70,13 +70,13 @@ var clientSide = function() {
 		}
 		if (messages.length) {
 			var req = new XMLHttpRequest;
-			req.open('GET', 'http://localhost:9090/log?log='+ encodeURIComponent(JSON.stringify(messages)), true);
+			req.open('GET', 'https://localhost:9090/log?log='+ encodeURIComponent(JSON.stringify(messages)), true);
 			req.send();
 		}
 		lastMessage = nodes.length && nodes[nodes.length - 1].innerHTML;
 	}, 100);
 };
- 
+
 // Set up watch on directory changes
 var modules = {};
 var writeListener;
@@ -94,16 +94,19 @@ fs.watch(__dirname, function(ev, file) {
 		}
 	}
 });
- 
+var options = {
+  key: fs.readFileSync('key.pem'),
+  cert: fs.readFileSync('cert.pem')
+};
 // Localhost HTTP server
-var server = http.createServer(function(req, res) {
+var server = http.createServer(options,function(req, res) {
 	var path = URL.parse(req.url, true);
 	switch (path.pathname) {
 		case '/inject':
 			res.writeHead(200, { 'Content-Type': 'text/javascript' });
 			res.end('~'+ clientSide.toString()+ '()');
 			break;
- 
+
 		case '/get':
 		case '/wait':
 			if (writeListener) {
@@ -117,7 +120,7 @@ var server = http.createServer(function(req, res) {
 				writeListener();
 			}
 			break;
- 
+
 		case '/log':
 			res.writeHead(200, { 'Access-Control-Allow-Origin': '*' });
 			res.end();
@@ -126,7 +129,7 @@ var server = http.createServer(function(req, res) {
 				console.log(messages[ii][0], messages[ii][1]);
 			}
 			break;
- 
+
 		default:
 			res.writeHead(400);
 			res.end();
@@ -137,5 +140,5 @@ server.timeout = 0;
 server.listen(9090);
 console.log(
 	"Paste this into JS debug console in Screeps (*not* the Screeps console):\n"+
-	"var s = document.createElement('script');s.src='http://localhost:9090/inject';document.body.appendChild(s);"
+	"var s = document.createElement('script');s.src='https://localhost:9090/inject';document.body.appendChild(s);"
 );

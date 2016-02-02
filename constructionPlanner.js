@@ -1,16 +1,16 @@
 module.exports = {
 	buildRoads: function(from, to)
 	{
-		var path = Game.getRoom('1-1').findPath(from, to, { ignoreCreeps: true });
+		var path = Game.spawns.Spawn1.room.findPath(from, to, { ignoreCreeps: true });
 		for(var i in path)
 		{
-			var result = Game.getRoom('1-1').createConstructionSite(path[i].x, path[i].y, Game.STRUCTURE_ROAD);
+			var result = Game.spawns.Spawn1.room.createConstructionSite(path[i].x, path[i].y, Game.STRUCTURE_ROAD);
 		}
 	},
 
 	buildRoadToAllSources: function()
 	{
-		var sources = Game.spawns.Spawn1.room.find(Game.SOURCES);
+		var sources = Game.spawns.Spawn1.room.find(FIND_SOURCES);
 
 		for(var i in sources)
 		{
@@ -20,7 +20,7 @@ module.exports = {
 
 	expandRampartsOutwards: function()
 	{
-		var ramparts = Game.getRoom('1-1').find(Game.MY_STRUCTURES, {
+		var ramparts = Game.spawns.Spawn1.room.find(FIND_MY_STRUCTURES, {
 			filter: function(struct)
 			{
 				return struct.structureType == Game.STRUCTURE_RAMPART
@@ -45,7 +45,7 @@ module.exports = {
 			for(var i in positions)
 			{
 				var pos = positions[i];
-				var tile = Game.getRoom('1-1').lookAt(pos[0], pos[1]);
+				var tile = Game.spawns.Spawn1.room.lookAt(pos[0], pos[1]);
 				var build = true;
 				for(var tilei in tile)
 				{
@@ -57,7 +57,7 @@ module.exports = {
 				}
 
 				if(build)
-					Game.getRoom('1-1').createConstructionSite(pos[0], pos[1], Game.STRUCTURE_RAMPART);
+					Game.spawns.Spawn1.room.createConstructionSite(pos[0], pos[1], Game.STRUCTURE_RAMPART);
 			}
 		}
 	}
